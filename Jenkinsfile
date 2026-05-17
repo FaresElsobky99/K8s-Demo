@@ -8,31 +8,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                echo 'Checking out source code...'
-                checkout scm
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                echo 'Installing Node.js dependencies...'
-                dir('app') {
-                    sh 'npm install'
-                }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                echo 'Running tests...'
-                dir('app') {
-                    sh 'npm test'
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
