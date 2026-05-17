@@ -11,7 +11,7 @@ const dbUrl = process.env.DB_URL || "mongo-service";
 const mongoUrl = `mongodb://${user}:${password}@${dbUrl}:27017`;
 
 app.get("/", (req, res) => {
-  res.send("Hello from Fares Kubernetes CI/CD app v1");
+  res.send("Hello from Fares Kubernetes CI/CD app v2 - deployed by Jenkins");
 });
 
 app.get("/health", (req, res) => {
