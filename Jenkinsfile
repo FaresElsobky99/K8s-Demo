@@ -11,7 +11,14 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
-                sh 'docker build -t $DOCKER_IMAGE:$IMAGE_TAG ./app'
+                sh 'docker build -t $DOCKER_IMAGE:$IMAGE_TAG -t $DOCKER_IMAGE:latest ./app'
+            }
+        }
+
+        stage('Run Tests Inside Container') {
+            steps {
+                echo 'Running tests inside Docker container...'
+                sh 'docker run --rm $DOCKER_IMAGE:$IMAGE_TAG npm test'
             }
         }
 
@@ -25,6 +32,7 @@ pipeline {
                 )]) {
                     sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                     sh 'docker push $DOCKER_IMAGE:$IMAGE_TAG'
+                    sh 'docker push $DOCKER_IMAGE:latest'
                 }
             }
         }
@@ -39,7 +47,7 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 echo 'Verifying Kubernetes rollout...'
-                sh 'kubectl rollout status deployment/webapp-deployment'
+                sh 'kubectl rollout status deployment/webapp-deployment --timeout=120s'
             }
         }
     }
@@ -50,7 +58,8 @@ pipeline {
         }
 
         failure {
-            echo 'Pipeline failed. Check the Jenkins logs.'
+            echo 'Pipeline failed. Attempting rollback...'
+            sh 'kubectl rollout undo deployment/webapp-deployment || true'
         }
     }
 }
