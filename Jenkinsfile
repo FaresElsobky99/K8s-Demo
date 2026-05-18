@@ -44,6 +44,7 @@ pipeline {
                 script {
                     env.DEPLOY_ATTEMPTED = "true"
                 }
+                sh 'kubectl apply -f k8s/webapp.yaml'
                 sh 'kubectl set image deployment/webapp-deployment webapp=$DOCKER_IMAGE:$IMAGE_TAG'
             }
         }
