@@ -50,14 +50,14 @@ spec:
 
         readinessProbe:
           httpGet:
-            path: /k8s-health
+            path: /health
             port: 3003
           initialDelaySeconds: 10
           periodSeconds: 5
 
         livenessProbe:
           httpGet:
-            path: /k8s-health
+            path: /health
             port: 3003
           initialDelaySeconds: 20
           periodSeconds: 10
