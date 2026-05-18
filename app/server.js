@@ -17,6 +17,9 @@ app.get("/", (req, res) => {
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
+app.get("/k8s-health", (req, res) => {
+  res.status(500).send("BROKEN FOR ROLLBACK TEST");
+});
 
 app.get("/db", async (req, res) => {
   let client;
