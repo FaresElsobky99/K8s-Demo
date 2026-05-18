@@ -5,6 +5,7 @@ pipeline {
         DOCKER_IMAGE = "fareselsobky/k8s-demo-app"
         IMAGE_TAG = "${BUILD_NUMBER}"
         KUBECONFIG = "/root/.kube/config-jenkins"
+        DEPLOY_ATTEMPTED = "false"
     }
 
     stages {
@@ -40,6 +41,9 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 echo 'Updating Kubernetes deployment image...'
+                script {
+                    env.DEPLOY_ATTEMPTED = "true"
+                }
                 sh 'kubectl set image deployment/webapp-deployment webapp=$DOCKER_IMAGE:$IMAGE_TAG'
             }
         }
@@ -58,8 +62,16 @@ pipeline {
         }
 
         failure {
-            echo 'Pipeline failed. Attempting rollback...'
-            sh 'kubectl rollout undo deployment/webapp-deployment || true'
+            echo 'Pipeline failed.'
+
+            script {
+                if (env.DEPLOY_ATTEMPTED == "true") {
+                    echo 'Deployment was attempted. Rolling back Kubernetes deployment...'
+                    sh 'kubectl rollout undo deployment/webapp-deployment || true'
+                } else {
+                    echo 'Deployment was not attempted. Skipping rollback.'
+                }
+            }
         }
     }
 }
