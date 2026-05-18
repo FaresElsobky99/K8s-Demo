@@ -14,12 +14,14 @@ app.get("/", (req, res) => {
   res.send("Hello from Fares Kubernetes CI/CD app v3 - auto deployed by GitHub webhook");
 });
 
-app.get("/health", (req, res) => {
-  res.status(200).send("OK");
-});
 app.get("/k8s-health", (req, res) => {
   res.status(500).send("BROKEN FOR ROLLBACK TEST");
 });
+
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 
 app.get("/db", async (req, res) => {
   let client;
