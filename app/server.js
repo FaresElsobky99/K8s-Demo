@@ -2,7 +2,7 @@ const express = require("express");
 const { MongoClient } = require("mongodb");
 
 const app = express();
-const port = 3003;
+const port = process.env.PORT || 3003;
 
 const user = process.env.USER_NAME;
 const password = process.env.USER_PWD;
@@ -37,6 +37,10 @@ app.get("/db", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`App listening on port ${port}`);
+  });
+}
+
+module.exports = app;
